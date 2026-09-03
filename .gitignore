@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+
+# Secrets and credentials (NEVER commit)
+.env
+*.pem
+*.key
+
+# Operating system
+.DS_Store
+Thumbs.db
+
+# Editors
+.idea/
+.vscode/
+
+# Challenge statement PDF at the root (versioned copy in docs/)
+/POSTECH - DCLT - Tech Challenge - Fase 1.pdf
