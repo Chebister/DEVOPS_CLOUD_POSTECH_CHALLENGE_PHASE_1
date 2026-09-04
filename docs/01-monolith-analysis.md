@@ -22,15 +22,11 @@ The ToggleMaster MVP is a REST API for managing Feature Flags, composed of:
 
 ## Why is it a monolith?
 
-_TODO: describe (to be confirmed after running locally)_
-
 - All code (presentation, business logic, and data access) lives in a single process/deployment (`app.py`).
 - There is no separation into independent services: the API and the database form a single deployment unit.
 - Scaling and evolution happen on the application as a whole, not per component.
 
 ## Advantages for an MVP
-
-_TODO_
 
 - Simplicity of development and understanding (a single codebase).
 - Single, fast deployment — ideal for validating the idea quickly.
@@ -39,8 +35,6 @@ _TODO_
 
 ## Disadvantages / limitations
 
-_TODO_
-
 - Coupling: any change requires redeploying the entire application.
 - Scales as a single block (cannot scale reads, writes, etc. independently).
 - Single point of failure: if the process goes down, the whole platform goes down.
@@ -48,7 +42,23 @@ _TODO_
 
 ## Notes from running locally
 
-_TODO: record results of `docker compose up` and tests with curl/Postman_
+**Environment:** Linux VPS (Rocky Linux 9), Docker 29.8.0 + Docker Compose v5.5.1, cloned from this repository to `/opt/togglemaster` and started with `docker compose up -d --build`. A [Caddy](https://caddyserver.com/) reverse proxy (in `/opt/proxy`) terminates TLS on ports 80/443 with a Let's Encrypt certificate and forwards to the app on port 5000.
+
+**Public URL:** https://toggle-local.cheb.com.br
+
+**Endpoint tests (2026-09-03, all passed):**
+
+| Test | Request | Result |
+| :--- | :--- | :--- |
+| Health check | `GET /health` | `{"status":"ok"}` (200) |
+| Create flag | `POST /flags` `{"name":"new-feature","is_enabled":true}` | 201, flag created |
+| List flags | `GET /flags` | `[{"is_enabled":true,"name":"new-feature"}]` |
+| Get flag | `GET /flags/new-feature` | `{"is_enabled":true,"name":"new-feature"}` |
+| Update flag | `PUT /flags/new-feature` `{"is_enabled":false}` | 200, flag updated |
+| Duplicate flag | `POST /flags` (existing name) | 409 with error message |
+| Persistence | `docker compose restart` | Data preserved (PostgreSQL volume) |
+
+**Confirmation of monolithic behavior observed during execution:** the entire application (routes, business rules, database access) runs as a single process inside one container; the only separate component is the database. Restarting the app container restarts the whole platform, and there is no way to deploy or scale parts of it independently.
 
 ## References
 

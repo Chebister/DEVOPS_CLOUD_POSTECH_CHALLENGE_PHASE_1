@@ -30,8 +30,22 @@ curl http://localhost:5000/health
 
 Full instructions (local + EC2 deployment) in the [application README](app/README.md) (in Portuguese, upstream repository).
 
+## Current deployment (local validation environment)
+
+The application is currently running with Docker on a Linux VPS (Rocky Linux 9), fronted by a [Caddy](https://caddyserver.com/) reverse proxy with a valid Let's Encrypt certificate (auto-renewal):
+
+| URL | Description |
+| :--- | :--- |
+| **https://toggle-local.cheb.com.br/health** | Public health check |
+| **https://toggle-local.cheb.com.br/flags** | Feature flags API |
+
+```text
+Internet --> Caddy (80/443, TLS + auto HTTPS redirect) --> app container (Flask/Gunicorn :5000) --> db container (PostgreSQL + persistent volume)
+```
+
 ## Useful links
 
+- **Application (local validation environment):** https://toggle-local.cheb.com.br
 - **Architecture diagram:** _TODO (Miro / diagrams.net)_
 - **Demo video:** _TODO_
 - **Original application repository:** https://github.com/dougls/toggle-master-monolith
