@@ -1,14 +1,14 @@
 # Monolithic Application Analysis
 
-> Challenge goal: run the application locally, understand how it works, and discuss why it is considered a "monolith", along with the pros and cons of this approach for an MVP.
+> Challenge goal: analyze the code and identify why it is considered a "monolith", and discuss the advantages and disadvantages of this approach for an MVP.
 
 ## Application overview
 
 The ToggleMaster MVP is a REST API for managing Feature Flags, composed of:
 
-- **`app.py`** — a single Flask application containing all responsibilities: API routes, database access, business rules, and initialization.
-- **PostgreSQL** — relational database with a single table (`flags`).
-- **`Dockerfile` / `docker-compose.yaml`** — packaging of the application and database for local execution.
+- **`app.py`:** a single Flask application containing all responsibilities: API routes, database access, business rules, and initialization.
+- **PostgreSQL:** relational database with a single table (`flags`).
+- **`Dockerfile` / `docker-compose.yaml`:** packaging of the application and database for local execution.
 
 ### Endpoints
 
@@ -22,23 +22,31 @@ The ToggleMaster MVP is a REST API for managing Feature Flags, composed of:
 
 ## Why is it a monolith?
 
-- All code (presentation, business logic, and data access) lives in a single process/deployment (`app.py`).
-- There is no separation into independent services: the API and the database form a single deployment unit.
-- Scaling and evolution happen on the application as a whole, not per component.
+1. **A single process holds all layers.** In `app.py`, HTTP handling, business rules, and database access are mixed together within the same functions. There is no separation into modules, layers, or repositories.
 
-## Advantages for an MVP
+2. **A single deployment unit.** Everything scales, ships, and fails together: `gunicorn app:app` starts the entire platform. There is no way to deploy or scale only one part of the application separately. Running `docker compose restart` on the `app` container restarts the application as a whole and, while the process is down, the platform is completely unavailable because there are no replicas.
 
-- Simplicity of development and understanding (a single codebase).
-- Single, fast deployment — ideal for validating the idea quickly.
-- Lower operational overhead (no orchestration, messaging, or inter-service networking).
-- More straightforward debugging and testing.
+## Advantages of the monolithic approach for an MVP
 
-## Disadvantages / limitations
+1. **Ease of understanding:** a developer can understand how the system works in a short time. No network between services, no serialization, no eventual consistency, no distributed tracing. A single stack trace is enough to see the complete picture.
 
-- Coupling: any change requires redeploying the entire application.
-- Scales as a single block (cannot scale reads, writes, etc. independently).
-- Single point of failure: if the process goes down, the whole platform goes down.
-- Growth tends to produce code that is hard to maintain (evolution is planned for later phases of the course).
+2. **Validation speed:** the deploy is `docker compose up`. The goal of an MVP is to validate the idea, not to scale, and the monolith delivers exactly that.
+
+3. **Trivial operation:** one service to monitor, one log, one healthcheck. Everything is centralized.
+
+4. **Minimum cost:** in the case of the Tech Challenge, we need nothing more than a small container to host the application.
+
+## Disadvantages and limitations of the monolithic approach
+
+1. **All-or-nothing scaling:** if one function becomes overloaded and needs scaling, we have to scale the entire platform, including the parts that do not need it.
+
+2. **Single release cycle:** changing a validation forces the redeployment of everything. On large teams, this leads to merge conflicts in the same file and collateral regressions.
+
+3. **SPOF:** single point of failure. If the process goes down, the platform goes down completely.
+
+## Conclusion
+
+Within the scope covered by PHASE 1, the Monolith is the right decision. The MVP needs fast feedback, and premature decomposition into microservices would kill the timing (Martin Fowler's "MonolithFirst" idea). The real problem is not the monolith, but letting it rot: the healthy evolution path would be first a modular monolith (separating `routes/`, `services/`, and `repository/` within the same deployment, and adding a connection pool) and only, in the later phases of the project, extracting services when there is scale or enough teams to justify it.
 
 ## Notes from running locally
 
@@ -58,7 +66,7 @@ The ToggleMaster MVP is a REST API for managing Feature Flags, composed of:
 | Duplicate flag | `POST /flags` (existing name) | 409 with error message |
 | Persistence | `docker compose restart` | Data preserved (PostgreSQL volume) |
 
-**Confirmation of monolithic behavior observed during execution:** the entire application (routes, business rules, database access) runs as a single process inside one container; the only separate component is the database. Restarting the app container restarts the whole platform, and there is no way to deploy or scale parts of it independently.
+**Confirmation of monolithic behavior observed during execution:** the entire application (routes, business rules, database access) runs as a single process inside one container; the only separate component is the database. Restarting the app container makes the entire platform unavailable until the process is back, and there is no way to deploy or scale parts of it independently.
 
 ## References
 
