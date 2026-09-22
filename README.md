@@ -21,6 +21,7 @@ Repository for **Phase 1 of the Tech Challenge of the DevOps & Cloud graduate pr
 - [AWS cost estimate](docs/04-cost-estimate.md)
 - [PostgreSQL 13 → 18 upgrade (Docker Compose)](docs/05-postgresql-13-to-18-upgrade.md)
 - [Python and dependency update (base image, packages, PostgreSQL client)](docs/06-python-and-dependency-update.md)
+- [Config via environment: removing credentials from docker-compose.yaml](docs/07-config-via-env-files.md)
 
 ## How to run the application locally
 
