@@ -19,6 +19,7 @@ Repository for **Phase 1 of the Tech Challenge of the DevOps & Cloud graduate pr
 - [12-Factor App discussion](docs/02-12-factor-app.md)
 - [Proposed AWS architecture](docs/03-aws-architecture.md)
 - [AWS cost estimate](docs/04-cost-estimate.md)
+- [PostgreSQL 13 → 18 upgrade (Docker Compose)](docs/05-postgresql-13-to-18-upgrade.md)
 
 ## How to run the application locally
 

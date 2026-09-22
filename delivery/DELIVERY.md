@@ -23,6 +23,7 @@
 - **Staging certificate fallback:** because the first issuance attempts failed (filtering), Caddy fell back to the Let's Encrypt staging CA, whose certificate is not trusted by browsers. Decision: cleared Caddy's data volume and re-obtained the certificate from the production CA, which succeeded.
 - **Public exposure with TLS (bonus beyond the challenge's local scope):** chose [Caddy](https://caddyserver.com/) as a reverse proxy for automatic Let's Encrypt issuance/renewal and HTTP-to-HTTPS redirect, proxying to the app on port 5000. Final URL: https://toggle-local.cheb.com.br
 - **Endpoint validation:** full CRUD tested with `curl` (health, create, list, get, update, 409 for duplicates, persistence across restarts). Results recorded in [docs/01-monolith-analysis.md](../docs/01-monolith-analysis.md).
+- **PostgreSQL 13 → 18 upgrade:** the database image was upgraded to `postgres:18` (18.6). Because it is a major version change, the data volume was recreated (data was disposable) and the app re-created its schema via `flask init-db`. Notably, the 18+ images require the volume mount at `/var/lib/postgresql` instead of the legacy `/var/lib/postgresql/data` — the entrypoint refuses to start otherwise. Full procedure, validation and rollback plan in [docs/05-postgresql-13-to-18-upgrade.md](../docs/05-postgresql-13-to-18-upgrade.md).
 
 ### AWS architecture and deployment
 
