@@ -35,7 +35,7 @@ _TODO: fill in after the AWS phase (instance types, PostgreSQL, VPC/subnet struc
 
 - [x] Application running locally (Docker) — https://toggle-local.cheb.com.br (video pending)
 - [ ] Architecture diagram (VPC, subnets, EC2, RDS, Security Groups) — link
-- [ ] 12-Factor App discussion — [docs/02-12-factor-app.md](../docs/02-12-factor-app.md)
+- [x] 12-Factor App discussion — [docs/02-12-factor-app.md](../docs/02-12-factor-app.md)
 - [ ] Application running on EC2 connected to RDS — video
 - [ ] Security Group and credentials configuration — video + screenshots in `evidence/`
 - [ ] AWS cost estimate — link + screenshot
