@@ -24,6 +24,7 @@
 - **Public exposure with TLS (bonus beyond the challenge's local scope):** chose [Caddy](https://caddyserver.com/) as a reverse proxy for automatic Let's Encrypt issuance/renewal and HTTP-to-HTTPS redirect, proxying to the app on port 5000. Final URL: https://toggle-local.cheb.com.br
 - **Endpoint validation:** full CRUD tested with `curl` (health, create, list, get, update, 409 for duplicates, persistence across restarts). Results recorded in [docs/01-monolith-analysis.md](../docs/01-monolith-analysis.md).
 - **PostgreSQL 13 → 18 upgrade:** the database image was upgraded to `postgres:18` (18.6). Because it is a major version change, the data volume was recreated (data was disposable) and the app re-created its schema via `flask init-db`. Notably, the 18+ images require the volume mount at `/var/lib/postgresql` instead of the legacy `/var/lib/postgresql/data` — the entrypoint refuses to start otherwise. Full procedure, validation and rollback plan in [docs/05-postgresql-13-to-18-upgrade.md](../docs/05-postgresql-13-to-18-upgrade.md).
+- **Base image and dependency update (12-Factor, factor II):** the base image was moved from EOL `python:3.9-slim` to `python:slim` (Python 3.14.7), all Python dependencies were upgraded to versions with modern-Python wheels, and the PostgreSQL client is now pinned to major version 18 via the official PGDG apt repository. Full procedure and validation in [docs/06-python-and-dependency-update.md](../docs/06-python-and-dependency-update.md).
 
 ### AWS architecture and deployment
 
