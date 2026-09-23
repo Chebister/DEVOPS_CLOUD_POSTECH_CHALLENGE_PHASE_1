@@ -49,7 +49,7 @@ Internet --> Caddy (80/443, TLS + auto HTTPS redirect) --> app container (Flask/
 ## Useful links
 
 - **Application (local validation environment):** https://toggle-local.cheb.com.br
-- **Architecture diagram:** _TODO (Miro / diagrams.net)_
+- **Architecture diagram:** source [`docs/03-aws-architecture.drawio`](docs/03-aws-architecture.drawio) (draw.io), published link _TODO (Miro / diagrams.net)_
 - **Demo video:** _TODO_
 - **Original application repository:** https://github.com/dougls/toggle-master-monolith
 

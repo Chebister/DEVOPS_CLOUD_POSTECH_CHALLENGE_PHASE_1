@@ -4,7 +4,8 @@
 
 ## Diagram
 
-- **Diagram link (Miro / diagrams.net):** _TODO_
+- **Diagram source (draw.io, editable):** [`03-aws-architecture.drawio`](03-aws-architecture.drawio)
+- **Diagram link (published, Miro / diagrams.net):** _TODO_
 - Exported image: _TODO (`evidence/architecture-diagram.png`)_
 
 ## Components
