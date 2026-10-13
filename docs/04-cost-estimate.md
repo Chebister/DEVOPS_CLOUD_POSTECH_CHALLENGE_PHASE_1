@@ -3,7 +3,7 @@
 > Challenge goal: estimate the monthly cost of the architecture using the AWS Pricing Calculator.
 
 - **Estimate link:** _TODO (calculator.aws → Share)_
-- **Estimate screenshot:** _TODO (`evidence/cost-estimate.png`)_
+- **Estimate screenshot:** [`evidence/cost-estimate.png`](../evidence/cost-estimate.png)
 
 ## Assumptions
 
