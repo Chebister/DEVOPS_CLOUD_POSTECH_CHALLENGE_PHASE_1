@@ -8,9 +8,9 @@
 
 - **Repository:** https://github.com/Chebister/DEVOPS_CLOUD_POSTECH_CHALLENGE_PHASE_1
 - **Application running (local validation environment, Docker + TLS):** https://toggle-local.cheb.com.br
-- **Architecture diagram:** _TODO (Miro / diagrams.net)_
+- **Architecture diagram:** [docs/03-aws-architecture.drawio](../docs/03-aws-architecture.drawio) · exported: [evidence/architecture-diagram.png](../evidence/architecture-diagram.png)
 - **Demo video (up to 15 min):** _TODO_
-- **Cost estimate (AWS Pricing Calculator):** _TODO_
+- **Cost estimate (AWS Pricing Calculator):** https://calculator.aws/#/estimate?id=500593d865d04d8e20dc3759c3c0b74dd6780dc2
 - **Cost estimate screenshot:** [`evidence/cost-estimate.png`](../evidence/)
 
 ## Summary of challenges found and decisions made
@@ -34,9 +34,9 @@ _TODO: fill in after the AWS phase (instance types, PostgreSQL, VPC/subnet struc
 ## Deliverables checklist
 
 - [x] Application running locally (Docker) — https://toggle-local.cheb.com.br (video pending)
-- [ ] Architecture diagram (VPC, subnets, EC2, RDS, Security Groups) — link
+- [x] Architecture diagram (VPC, subnets, EC2, RDS, Security Groups) — [docs/03-aws-architecture.drawio](../docs/03-aws-architecture.drawio) + [evidence/architecture-diagram.png](../evidence/architecture-diagram.png)
 - [x] 12-Factor App discussion — [docs/02-12-factor-app.md](../docs/02-12-factor-app.md)
 - [ ] Application running on EC2 connected to RDS — video
 - [ ] Security Group and credentials configuration — video + screenshots in `evidence/`
-- [ ] AWS cost estimate — link + screenshot
+- [x] AWS cost estimate — [link](https://calculator.aws/#/estimate?id=500593d865d04d8e20dc3759c3c0b74dd6780dc2) + [screenshot](../evidence/cost-estimate.png)
 - [ ] Demo video (up to 15 min) — link
