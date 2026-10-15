@@ -8,6 +8,7 @@ venv/
 .env
 *.pem
 *.key
+docker-compose.override.yml
 
 # Operating system
 .DS_Store
