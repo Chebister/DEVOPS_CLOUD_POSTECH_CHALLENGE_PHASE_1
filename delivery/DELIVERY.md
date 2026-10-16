@@ -2,14 +2,14 @@
 
 ## Participants
 
-- Yuri _TODO: last name / student ID_
+- Yuri Vinicius Santin de Araújo (RM377533)
 
 ## Links
 
 - **Repository:** https://github.com/Chebister/DEVOPS_CLOUD_POSTECH_CHALLENGE_PHASE_1
 - **Application running (local validation environment, Docker + TLS):** https://toggle-local.cheb.com.br
 - **Architecture diagram:** [docs/03-aws-architecture.drawio](../docs/03-aws-architecture.drawio) · exported: [evidence/architecture-diagram.png](../evidence/architecture-diagram.png)
-- **Demo video (up to 15 min):** _TODO_
+- **Demo video (up to 15 min):** delivered separately with the final submission (external links kept out of this public repository)
 - **Cost estimate (AWS Pricing Calculator):** https://calculator.aws/#/estimate?id=500593d865d04d8e20dc3759c3c0b74dd6780dc2
 - **Cost estimate screenshot:** [`evidence/cost-estimate.png`](../evidence/)
 
@@ -29,14 +29,31 @@
 
 ### AWS architecture and deployment
 
-_TODO: fill in after the AWS phase (instance types, PostgreSQL, VPC/subnet structure, Security Groups with least privilege, RDS credentials via environment variables, manual provisioning and EC2 deployment notes)._
+Provisioned manually via the AWS console (us-east-1), validated on 2026-10-12:
+
+- **VPC** `prod-vpc` (10.25.0.0/16) with an attached Internet Gateway; a public subnet (10.25.0.0/24) for the application tier and isolated DB subnets in two AZs (10.25.10.0/24, 10.25.11.0/24) with a local-only route table — the database tier has no internet route. Full detail in [docs/03-aws-architecture.md](../docs/03-aws-architecture.md).
+- **EC2** `srv-togglemaster-prod` (t3.micro, Ubuntu 24.04, IMDSv2 required): application container (Flask/Gunicorn :5000) behind a Caddy container (host network) terminating TLS on 80/443 with automatic Let's Encrypt issuance; only the `app` service runs (`docker compose up -d --no-deps app`) — no local PostgreSQL on AWS. Elastic IP attached; DNS on Cloudflare.
+- **RDS** PostgreSQL 18 (`database-1`, db.t4g.micro, Single-AZ) in the isolated subnets (DB subnet group across two AZs), public access disabled, reachable only on 5432 from the application Security Group.
+- **Security Groups (least privilege):** `prod-app-sg` — inbound 80/443 from 0.0.0.0/0 and 22 only from the administrator IP /32 (key-only SSH; the lab account has no IAM permissions for SSM); `prod-db-sg` — inbound 5432 only from `prod-app-sg` (SG-to-SG reference, not CIDR). Port 5000 is never exposed — Caddy proxies it internally.
+- **Credentials:** the RDS master password is generated and managed by RDS in AWS Secrets Manager (managed rotation) and injected into the application via a server-side `docker-compose.override.yml` (chmod 600, root-owned, outside Git and covered by `.gitignore`). No secret is ever committed.
+
+Challenges and decisions (AWS phase):
+
+- **NAT gateway:** the first creation failed — a public NAT gateway requires the Internet Gateway to be attached to the VPC *before* creation. After analysis, the final architecture dropped the NAT gateway entirely: the web tier needs *inbound* 80/443 (Caddy/ACME), so the EC2 lives in a public subnet; RDS patching is AWS-managed, with no customer NAT required.
+- **ALB:** evaluated and discarded — a single instance in the MVP and Caddy already terminates TLS (~US$ 16–20/month saved).
+- **RDS in the wrong subnet:** the first instance was born in the default subnet group (which includes the public subnet) and RDS refuses in-place subnet-group moves within the same VPC (misleading error message) — the instance was recreated directly in the isolated group.
+- **`$` in the generated password swallowed by Compose interpolation** (interpreted as an undefined variable) — fixed with the `$$` escape in the environment file.
+- **Self-recovery:** after a VM reboot the application did not return (no restart policy) — `unless-stopped` applied; today the whole VM recovers by itself (systemd → Docker → containers → entrypoint waits for RDS).
+- **VM "unreachable" while a VPN was active:** the SSH rule allows only the residential IP; a VPN changes the egress IP and the port appears blocked.
+
+Validation (via https://togglemaster.cheb.com.br): health 200 · create 201 · list/get/update 200 · duplicate 409 · application restart keeps data (persisted in RDS). Cost estimate (~US$ 23.57/month) in [docs/04-cost-estimate.md](../docs/04-cost-estimate.md).
 
 ## Deliverables checklist
 
-- [x] Application running locally (Docker) — https://toggle-local.cheb.com.br (video pending)
+- [x] Application running locally (Docker) — https://toggle-local.cheb.com.br
 - [x] Architecture diagram (VPC, subnets, EC2, RDS, Security Groups) — [docs/03-aws-architecture.drawio](../docs/03-aws-architecture.drawio) + [evidence/architecture-diagram.png](../evidence/architecture-diagram.png)
 - [x] 12-Factor App discussion — [docs/02-12-factor-app.md](../docs/02-12-factor-app.md)
-- [ ] Application running on EC2 connected to RDS — video
-- [ ] Security Group and credentials configuration — video + screenshots in `evidence/`
+- [x] Application running on EC2 connected to RDS — [docs/03-aws-architecture.md](../docs/03-aws-architecture.md) · tests in [evidence/](../evidence/)
+- [x] Security Group and credentials configuration — screenshots in [evidence/](../evidence/)
 - [x] AWS cost estimate — [link](https://calculator.aws/#/estimate?id=500593d865d04d8e20dc3759c3c0b74dd6780dc2) + [screenshot](../evidence/cost-estimate.png)
-- [ ] Demo video (up to 15 min) — link
+- [x] Demo video (up to 15 min) — delivered separately with the final submission

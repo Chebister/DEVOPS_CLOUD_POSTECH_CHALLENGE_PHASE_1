@@ -10,14 +10,14 @@ Repository for **Phase 1 of the Tech Challenge of the DevOps & Cloud graduate pr
 | :--- | :--- |
 | [`app/`](app/) | Source code of the monolithic application (Flask + PostgreSQL) |
 | [`docs/`](docs/) | Challenge statement and technical documentation |
-| [`evidence/`](evidence/) | Screenshots (Security Groups, cost estimate, running app) |
+| [`evidence/`](evidence/) | Screenshots (Security Groups, RDS, Secrets Manager, architecture diagram, cost estimate, running app) |
 | [`delivery/DELIVERY.md`](delivery/DELIVERY.md) | Final delivery report |
 
 ## Technical documentation
 
 - [Monolithic application analysis (pros and cons)](docs/01-monolith-analysis.md)
 - [12-Factor App discussion](docs/02-12-factor-app.md)
-- [Proposed AWS architecture](docs/03-aws-architecture.md)
+- [As-built AWS architecture](docs/03-aws-architecture.md)
 - [AWS cost estimate](docs/04-cost-estimate.md)
 - [PostgreSQL 13 → 18 upgrade (Docker Compose)](docs/05-postgresql-13-to-18-upgrade.md)
 - [Python and dependency update (base image, packages, PostgreSQL client)](docs/06-python-and-dependency-update.md)
@@ -33,9 +33,20 @@ curl http://localhost:5000/health
 
 Full instructions (local + EC2 deployment) in the [application README](app/README.md) (in Portuguese, upstream repository).
 
-## Current deployment (local validation environment)
+## Current deployments
 
-The application is currently running with Docker on a Linux VPS (Rocky Linux 9), fronted by a [Caddy](https://caddyserver.com/) reverse proxy with a valid Let's Encrypt certificate (auto-renewal):
+**AWS (this phase's target environment)** — the application runs on an EC2 t3.micro (Ubuntu 24.04) behind Caddy with a Let's Encrypt certificate, connected to RDS PostgreSQL 18 in isolated subnets:
+
+| URL | Description |
+| :--- | :--- |
+| **https://togglemaster.cheb.com.br/health** | Public health check |
+| **https://togglemaster.cheb.com.br/flags** | Feature flags API |
+
+```text
+Internet --> Cloudflare DNS --> Elastic IP --> IGW --> public subnet --> Caddy (80/443, TLS) --> app container (Flask/Gunicorn :5000) --> RDS PostgreSQL 18 (isolated DB subnets, no internet route)
+```
+
+**Local validation environment** — the application also runs with Docker on a Linux VPS (Rocky Linux 9), fronted by a [Caddy](https://caddyserver.com/) reverse proxy with a valid Let's Encrypt certificate (auto-renewal):
 
 | URL | Description |
 | :--- | :--- |
@@ -48,9 +59,10 @@ Internet --> Caddy (80/443, TLS + auto HTTPS redirect) --> app container (Flask/
 
 ## Useful links
 
+- **Application (AWS):** https://togglemaster.cheb.com.br
 - **Application (local validation environment):** https://toggle-local.cheb.com.br
-- **Architecture diagram:** source [`docs/03-aws-architecture.drawio`](docs/03-aws-architecture.drawio) (draw.io), published link _TODO (Miro / diagrams.net)_
-- **Demo video:** _TODO_
+- **Architecture diagram:** source [`docs/03-aws-architecture.drawio`](docs/03-aws-architecture.drawio) (draw.io) · exported: [`evidence/architecture-diagram.png`](evidence/architecture-diagram.png) (published version delivered separately)
+- **Demo video:** delivered separately with the final submission
 - **Original application repository:** https://github.com/dougls/toggle-master-monolith
 
 ## Security
