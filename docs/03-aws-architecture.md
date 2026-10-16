@@ -5,7 +5,7 @@
 ## Diagram
 
 - **Diagram source (draw.io, editable):** [`03-aws-architecture.drawio`](03-aws-architecture.drawio)
-- **Diagram link (published, Miro / diagrams.net):** _TODO_
+- **Diagram link (published):** delivered separately with the final submission (external links kept out of this public repository)
 - Exported image: [`evidence/architecture-diagram.png`](../evidence/architecture-diagram.png)
 
 ## Region and network
